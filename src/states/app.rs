@@ -1,3 +1,4 @@
+use std::env;
 use git2::Oid;
 use iced::widget::combo_box::State as ComboBoxState;
 
@@ -12,7 +13,7 @@ pub struct State {
 impl State {
     pub async fn load() -> Self {
         let paths = vec![
-            String::from("/some/git/project/path"),
+            String::from(env::var("PWD").unwrap()), // TODO temporary hard-coded list of repos
         ];
         Self {
             repo_file_paths: paths.clone(),
