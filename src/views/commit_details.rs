@@ -10,7 +10,12 @@ use crate::{states::app::State, messages::app::Message};
 pub fn view<'a>(s: &'a State) -> Element<'a, Message> {
     let repo = Repository::open(s.selected_repo_path.clone().unwrap()).unwrap();
     let commit = repo.find_commit(s.selected_commit.unwrap()).unwrap();
-    let parent_commit = commit.get_immediate_parent().unwrap();
+    let parent_commit = match commit.get_immediate_parent() {
+        Some(c) => c,
+        None => {
+            return text("detailing first push is not implemented yet").into();
+        }
+    };
     let diff = repo.diff_commit_to_commit(&parent_commit,&commit).unwrap();
     let easy_file_diff = diff.get_easy_vec();
 
