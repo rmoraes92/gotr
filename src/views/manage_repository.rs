@@ -1,3 +1,5 @@
+use std::cmp::min;
+
 use git2::Repository;
 
 use iced::{
@@ -12,7 +14,8 @@ use crate::{messages::app::Message, states::app::State, views::commit_details};
 pub fn view<'a>(s: &'a State) -> Element<'a, Message> {
     let repo = Repository::open(s.selected_repo_path.clone().unwrap()).unwrap();
     let branch = repo.get_head_branch().unwrap();
-    let commits = repo.get_commits(&branch).unwrap()[0..20].to_vec(); // TODO find a way to paginate this!
+    let commits = repo.get_commits(&branch).unwrap();
+    let commits = commits[..min(commits.len(), 10)].to_vec(); // TODO find a way to paginate this!
     container(
         row![
             scrollable(
