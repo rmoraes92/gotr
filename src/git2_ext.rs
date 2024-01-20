@@ -161,7 +161,18 @@ impl ExtDiff for Diff<'_> {
                     };
                 },
                 DiffLineType::ContextEOFNL => todo!(),
-                DiffLineType::AddEOFNL => todo!(),
+                DiffLineType::AddEOFNL => {
+                    // TODO this does NOT generate any entries. We might as well skip it all time?
+                    let ctx = from_utf8(l.content()).unwrap().to_string();
+                    match l.new_lineno() {
+                        Some(no) => ediff_buffer.new_lines.push((no, "x".to_string(), ctx.clone())),
+                        None => (),
+                    };
+                    match l.old_lineno() {
+                        Some(no) => ediff_buffer.old_lines.push((no, "x".to_string(), ctx.clone())),
+                        None => (),
+                    };
+                },
                 DiffLineType::DeleteEOFNL => todo!(),
                 DiffLineType::FileHeader => {
                     if ediff_buffer.header.len() > 0 {
