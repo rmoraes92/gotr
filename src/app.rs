@@ -1,10 +1,10 @@
+use std::path::Path;
+
+use git2::{IndexAddOption, IndexMatchedPath};
 use iced::{Application, Theme, executor::Default, Command};
 
-use crate::{states::app::State, messages::app::Message,
-    views::{
-        app_loading,
-        app_loaded,
-        manage_repository
+use crate::{git2_ext::ExtRepo, messages::app::Message, states::app::State, views::{
+        app_loaded, app_loading, manage_repository, staging_details
     }
 };
 
@@ -12,7 +12,8 @@ use crate::{states::app::State, messages::app::Message,
 pub enum App {
     Loading,
     Loaded(State),
-    RepositorySelected(State),
+    ShowCommitSummary(State),
+    ShowHEADSummary(State),
 }
 
 impl Application for App {
@@ -53,17 +54,45 @@ impl Application for App {
                 match message {
                     Self::Message::RepositorySelected(path) => {
                         state.selected_repo_path = Some(path);
-                        *self = App::RepositorySelected(state.clone());
+                        state.selected_commit = None;
+                        *self = App::ShowHEADSummary(state.clone());
                     },
                     _ => (),
                 }
                 Command::none()
             },
-            Self::RepositorySelected(state) => {
+            Self::ShowCommitSummary(state) => {
                 match message {
                     Self::Message::CommitSelected(oid) => {
                         state.selected_commit = Some(oid);
-                        *self = App::RepositorySelected(state.clone());
+                        *self = App::ShowCommitSummary(state.clone());
+                    },
+                    Self::Message::ShowHEADSummary => {
+                        state.selected_commit = None;
+                        *self = App::ShowHEADSummary(state.clone());
+                    },
+                    _ => (),
+                }
+                Command::none()
+            },
+            Self::ShowHEADSummary(state) => {
+                match message {
+                    Self::Message::CommitSelected(oid) => {
+                        println!("Message::CommitSelected");
+                        state.selected_commit = Some(oid);
+                        *self = App::ShowCommitSummary(state.clone());
+                    },
+                    Self::Message::StageFile(file_path) => {
+                        state.selected_commit = None;
+                        let repo = state.get_repo();
+                        repo.stage_file(file_path);
+                        *self = App::ShowHEADSummary(state.clone());
+                    },
+                    Self::Message::UnstageFile(file_path) => {
+                        state.selected_commit = None;
+                        let repo = state.get_repo();
+                        repo.unstage_file(file_path);
+                        *self = App::ShowHEADSummary(state.clone());
                     },
                     _ => (),
                 }
@@ -81,9 +110,13 @@ impl Application for App {
             App::Loaded(state) => {
                 app_loaded::view(state)
             },
-            App::RepositorySelected(state) => {
+            App::ShowCommitSummary(state) => {
                 manage_repository::view(state)
-            }
+            },
+            App::ShowHEADSummary(state) => {
+                println!("App::ShowHEADSummary");
+                staging_details::view(state)
+            },
         }
     }
 }

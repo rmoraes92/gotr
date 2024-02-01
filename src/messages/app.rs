@@ -9,4 +9,7 @@ pub enum Message {
     StateLoaded(State),
     RepositorySelected(String),
     CommitSelected(Oid),
+    ShowHEADSummary,
+    StageFile(String),
+    UnstageFile(String),
 }

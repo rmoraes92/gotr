@@ -1,5 +1,5 @@
 use std::env;
-use git2::Oid;
+use git2::{Oid, Repository};
 use iced::widget::combo_box::State as ComboBoxState;
 
 #[derive(Debug, Clone)]
@@ -24,5 +24,9 @@ impl State {
     }
     pub fn get_last_open_repo_path(&self) -> String {
         self.repo_file_paths.clone().into_iter().nth(0).unwrap()
+    }
+    pub fn get_repo(&self) -> Repository {
+        Repository::open(
+            self.selected_repo_path.clone().unwrap()).unwrap()
     }
 }
