@@ -8,7 +8,7 @@ use iced::widget::{column, container, row, scrollable, vertical_space};
 use crate::git2_ext::{ExtRepo, ExtCommit, ExtDiff};
 use crate::styles::blue_container::BlueContainerStyleSheet;
 use crate::{states::app::State, messages::app::Message};
-use crate::{styles};
+// use crate::{styles};
 
 pub fn view<'a>(s: &'a State) -> Element<'a, Message> {
     let repo = Repository::open(s.selected_repo_path.clone().unwrap()).unwrap();

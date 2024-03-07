@@ -1,4 +1,4 @@
-use iced::{gradient, widget::container, Color, Radians};
+use iced::{gradient, widget::container, Radians};
 
 pub struct BlueContainerStyleSheet;
 
@@ -7,8 +7,6 @@ impl BlueContainerStyleSheet {
         iced::theme::Container::Custom(Box::new(Self))
     }
 }
-
-
 
 impl container::StyleSheet for BlueContainerStyleSheet {
     type Style = iced::Theme;
@@ -28,5 +26,3 @@ impl container::StyleSheet for BlueContainerStyleSheet {
         }
     }
 }
-
-

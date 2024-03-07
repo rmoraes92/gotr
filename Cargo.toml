@@ -8,4 +8,4 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.79"
 git2 = "0.18.1"
-iced = {version = "0.10.0", features = ["async-std", "debug"]}
+iced = {version = "0.12.1", features = ["lazy", "async-std", "debug"]}

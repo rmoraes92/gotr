@@ -1,7 +1,5 @@
 use iced::{
-    Element,
-    Length,
-    widget::{*},
+    widget::*, Element, Length
 };
 
 use crate::{messages::app::Message, states::app::State, views::commit_details};

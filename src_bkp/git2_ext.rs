@@ -141,13 +141,8 @@ impl EasyFileDiff {
             status: None,
         }
     }
-    pub fn is_staged(&self, staged_deltas: &Vec<DiffDelta>) -> bool {
-        for d_delta in staged_deltas {
-            if self.new_file_path.unwrap() == d_delta.new_file().path().unwrap().display().to_string() {
-                return true;
-            }
-        }
-        return false;
+    pub fn is_staged(&self, _staged_deltas: &Vec<DiffDelta>) -> bool {
+       todo!();
     }
     pub fn truncate_all_new_lines(&self) -> String {
         let mut ret = String::from("");
@@ -183,7 +178,7 @@ impl ExtDiff for Diff<'_> {
         let mut ediff_vec: Vec<EasyFileDiff> = vec![];  // TODO this needs to be a vector
         let mut ediff_buffer: EasyFileDiff = EasyFileDiff::default();
     
-        let _ = self.print(git2::DiffFormat::Patch, |d_delta, d_hunk, d_line| {
+        let _ = self.print(git2::DiffFormat::Patch, |d_delta, _d_hunk, d_line| {
             //dbg!(&d_delta);
             //dbg!(&d_hunk);
             //dbg!(&d_line);

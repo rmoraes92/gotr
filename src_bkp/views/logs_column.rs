@@ -1,11 +1,15 @@
 use std::cmp::min;
 
 use git2::Repository;
-use iced::widget::pane_grid::{self, Pane};
-use iced::widget::rule::FillMode;
-use iced::widget::text::LineHeight;
+// use iced::widget::pane_grid::{self, Pane};
+// use iced::widget::rule::FillMode;
+// use iced::widget::text::LineHeight;
 use iced::Element;
-use iced::widget::{button, column, horizontal_rule, horizontal_space, row, text, vertical_space, PaneGrid};
+use iced::widget::{button, column,
+    //horizontal_rule,
+    horizontal_space, row, text, vertical_space, 
+//    PaneGrid
+};
 use crate::git2_ext::{ExtCommit, ExtRepo};
 use crate::{messages::app::Message, states::app::State};
 

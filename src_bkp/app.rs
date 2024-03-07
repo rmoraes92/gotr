@@ -1,10 +1,11 @@
-use std::path::Path;
+// use std::path::Path;
 
-use git2::{IndexAddOption, IndexMatchedPath};
-use iced::{Application, Theme, executor::Default, Command};
+// use git2::{IndexAddOption, IndexMatchedPath};
+use iced::{executor::Default, widget::pane_grid, Application, Command, Theme};
 
-use crate::{git2_ext::ExtRepo, messages::app::Message, states::app::State, views::{
-        app_loaded, app_loading, manage_repository, staging_details
+use crate::{git2_ext::ExtRepo, messages::{app::Message, pane_grid::PaneGridEvent}, states::{app::State, custom_gridpane::CustomGridPane}, views::{
+        // self,
+        app_loading, main_window_logs_and_commits, manage_repository, select_repo, staging_details
     }
 };
 
@@ -31,7 +32,9 @@ impl Application for App {
             App::Loading,
             Command::batch(vec![
                 Command::perform(State::load(), Message::StateLoaded)
-            ]), // TODO Is it possible to NOT pass a Command?
+            ]),
+            // TODO Is it possible to NOT pass a Command?
+            // Command::none() // TODO Yes it is
         )
     }
 
@@ -71,11 +74,18 @@ impl Application for App {
                         state.selected_commit = None;
                         *self = App::ShowHEADSummary(state.clone());
                     },
+                    Self::Message::PaneGridResized(pane_grid::ResizeEvent { split, ratio }) => {
+                        state.main_window_panegrid_state.as_mut().unwrap().resize(&split, ratio);
+                    },
+                    Self::Message::PaneGrid(PaneGridEvent::Resized(pane_grid::ResizeEvent { split, ratio })) => {
+                        state.main_window_panegrid_state.as_mut().unwrap().resize(&split, ratio);
+                    }
                     _ => (),
                 }
                 Command::none()
             },
             Self::ShowHEADSummary(state) => {
+                // 1st view after we select a repository
                 match message {
                     Self::Message::CommitSelected(oid) => {
                         println!("Message::CommitSelected");
@@ -102,16 +112,17 @@ impl Application for App {
         }
     }
 
-    fn view(&self) -> iced::Element<'_, Self::Message, iced::Renderer<Self::Theme>> {
+    fn view(&self) -> iced::Element<Self::Message> {
         match self {
             App::Loading => {
                 app_loading::view()
             },
             App::Loaded(state) => {
-                app_loaded::view(state)
+                select_repo::view(state)
             },
             App::ShowCommitSummary(state) => {
-                manage_repository::view(state)
+                // manage_repository::view(state)
+                main_window_logs_and_commits::view(state)
             },
             App::ShowHEADSummary(state) => {
                 println!("App::ShowHEADSummary");

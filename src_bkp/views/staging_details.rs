@@ -1,9 +1,13 @@
-use std::path::Path;
+// use std::path::Path;
 
-use git2::{Branch, Delta, DiffDelta, Repository, StatusOptions};
+use git2::{
+    // Branch, Delta, DiffDelta, 
+    Repository, StatusOptions};
 use iced::{font::Weight, widget::{button, column, container, horizontal_space, row, scrollable, text, vertical_space}, Element, Font};
 use crate::views::logs_column;
 use crate::{git2_ext::{ExtDiff, ExtRepo}, messages::app::Message, states::app::State};
+
+pub const USE_PANE_GRID: bool = true;
 
 pub fn view<'a>(s: &'a State) -> Element<'a, Message> {
     let repo = Repository::open(s.selected_repo_path.clone().unwrap()).unwrap();
@@ -14,11 +18,18 @@ pub fn view<'a>(s: &'a State) -> Element<'a, Message> {
 
     let mut opts = StatusOptions::new();
     opts.include_untracked(false);
-    let statuses = repo.statuses(Some(&mut opts));
+    let _statuses = repo.statuses(Some(&mut opts)).unwrap();
 
-    let staged_deltas: Vec<DiffDelta> = statuses.unwrap().iter()
-        .filter(|se| se.status() != git2::Status::CURRENT)
-        .map(|se| se.head_to_index().unwrap()).collect();
+    // let x: Vec<String> = statuses.into_iter()
+    //     .filter(|se: &git2::StatusEntry<'_>| se.status() != git2::Status::CURRENT)
+    //     .map(|se: git2::StatusEntry<'_>| {
+    //         match se.head_to_index() {
+    //             Some(ddelta) => {
+    //                 return ddelta.new_file().path().unwrap().display().to_string()
+    //             },
+    //             None => String::from("???"),
+    //         }
+    //     }).collect();
 
     row![
         logs_column::view(s),
@@ -32,7 +43,7 @@ pub fn view<'a>(s: &'a State) -> Element<'a, Message> {
                     container(
                         column![
                             row![
-                                if ediff.is_staged(&staged_deltas) {  // TODO this is
+                                if true {  // TODO this is
                                                                                  // not working as
                                                                                  // intended
                                     button(text("stage")).on_press(Message::StageFile(file_path))
