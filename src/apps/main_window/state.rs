@@ -33,6 +33,7 @@ pub struct MainWindowState {
     // pub panegrid_state: iced::widget::pane_grid::State<MyPane>
     pub counter: usize,
     pub repository_path: Option<String>,
+    pub commit_details_oid: Option<String>,
     pub panegrid_state: iced::widget::pane_grid::State<MyPane>,
 }
 
@@ -50,6 +51,11 @@ impl Default for MainWindowState {
         let (mut panegrid_state, _left_pane) = iced::widget::pane_grid::State::new(MyPane::new_left());
         let axis = iced::widget::pane_grid::Axis::Vertical;
         panegrid_state.split(axis, _left_pane, MyPane::new_right());
-        Self { counter: 0, repository_path: None, panegrid_state: panegrid_state }
+        Self {
+            counter: 0,
+            repository_path: None,
+            commit_details_oid: None,
+            panegrid_state: panegrid_state
+        }
     }
 }

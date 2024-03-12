@@ -1,10 +1,14 @@
 use crate::git;
 use crate::globals;
 use crate::apps::main_window::message::Message as MainWindowMsg;
+use crate::apps::main_window::state::MainWindowState;
 
-pub fn view<'a>(repo: &git2::Repository) -> iced::Element<'a, globals::Message> {
-    let branch: git2::Branch = git::get_head_branch(repo).unwrap();
-    let commits: Vec<git2::Commit> = git::get_commits(repo, &branch).unwrap();
+pub fn view<'a>(state: MainWindowState) -> iced::Element<'a, globals::Message> {
+    let repo_path: &String = state.repository_path.as_ref().unwrap();
+    let repo: git2::Repository = git::open(repo_path);
+    let branch: git2::Branch = git::get_head_branch(&repo).unwrap();
+    let commits: Vec<git2::Commit> = git::get_commits(&repo, &branch).unwrap();
+
     let col = iced::widget::column(
         commits.into_iter().map(|commit| {
             iced::widget::column![

@@ -7,7 +7,6 @@ pub use state::MainWindowState;
 
 use iced;
 use crate::globals;
-use crate::git;
 
 pub const APP_NAME: &str = "main_window";
 
@@ -26,6 +25,9 @@ pub fn update(
         ) => {
             state.panegrid_state.resize(split, ratio);
         },
+        message::Message::CommitSelected(commit_oid) => {
+            state.commit_details_oid = Some(commit_oid.to_string());
+        }
         _ => (),
     };
     cmd_none
@@ -34,18 +36,10 @@ pub fn update(
 // TODO we might want to set <Into<MainWindowState>> 
 pub fn view<'a>(state: &MainWindowState) -> iced::Element<'a, globals::Message> {
     // let c: usize = state.counter;
-    let repo_path: &String = state.repository_path.as_ref().unwrap();
-    let repo: git2::Repository = git::open(repo_path);
     iced::widget::container(
             iced::widget::row![
-                views::commit_list_column::view(&repo),
-                // iced::widget::text(format!("Clicked {} times", c)),
-                // iced::widget::button("Increment Counter")
-                //     .on_press(
-                //         globals::Message::MainWindow(
-                //             Message::IncrementCounter
-                //         )
-                //     ),
+                views::commit_list_column::view(state.clone()),
+                views::commit_details::view(state.clone()),
             ]
         )
         .width(iced::Length::Fill)
@@ -117,10 +111,10 @@ pub fn handle_responsive<'a>(
 ) -> iced::Element<'a, globals::Message>{
     match pane_orientation {
         state::PaneOrientation::Left => {
-            let repo_path: &String = state.repository_path.as_ref().unwrap();
-            let repo: git2::Repository = git::open(repo_path);
-            views::commit_list_column::view(&repo)
+            views::commit_list_column::view(state.clone())
         },
-        state::PaneOrientation::Right => iced::widget::text("right panel").into(),
+        state::PaneOrientation::Right => {
+            views::commit_details::view(state.clone())
+        }
     }
 }
