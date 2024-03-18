@@ -16,7 +16,7 @@ impl State {
         let paths = vec![
             String::from(env::var("PWD").unwrap()), // TODO temporary hard-coded list of repos
         ];
-        thread::sleep(Duration::from_millis(5000));
+        thread::sleep(Duration::from_millis(2000));
         Self {
             repository_path: None,
             recent_repository_paths: paths,
